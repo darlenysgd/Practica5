@@ -1,0 +1,49 @@
+.topbar {
+
+    background-color: Black;
+    height: 60px;
+
+}
+
+.body-row{
+
+    padding-top: 60px;
+}
+.dorado {
+
+    color: #6290bc;
+    font-weight: bold;
+
+}
+
+h2{
+
+    padding-bottom: 30px;
+    font-weight: bold;
+}
+
+.entrada{
+
+    width: 200px;
+}
+
+.panel-css{
+
+    width: 900px;
+    margin: auto;
+}
+
+.login-form{
+ top: 100px;
+}
+
+.login-headers{
+
+    color: white;
+}
+
+.Home-bg{
+    width: auto;
+    height: 50px;
+    background-color: black;
+}
