@@ -2,6 +2,7 @@ package Servicios;
 
 
 
+
         import org.eclipse.jetty.websocket.api.Session;
         import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
         import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -12,6 +13,7 @@ package Servicios;
         import j2html.tags.ContainerTag;
         import java.io.IOException;
         import java.util.ArrayList;
+        import java.util.HashMap;
         import java.util.List;
 
 /**
@@ -21,6 +23,12 @@ package Servicios;
 @WebSocket
 public class ServidorMensajesWebSocketHandler {
     public static List<Session> usuariosConectados = new ArrayList<>();
+    public static HashMap <Session, String> usuarios = new HashMap<>();
+    public static HashMap <String, Session> sesiones = new HashMap<>();
+    public static Session sesionAdmin;
+
+
+
 
     /**
      * Una vez conectado el cliente se activa este metodo.
@@ -51,12 +59,44 @@ public class ServidorMensajesWebSocketHandler {
      */
     @OnWebSocketMessage
     public void recibiendoMensaje(Session usuario, String message) {
-        System.out.println("Recibiendo del cliente: "+usuario.getLocalAddress().getAddress().toString()+" - Mensaje"+message);
+
+
+        System.out.println("Recibiendo del cliente: "+usuario.getLocalAddress().getAddress().toString()+" - Mensaje "+message);
         try {
-            //Enviar un simple mensaje al cliente que mando al servidor..
-            usuario.getRemote().sendString("Mensaje enviado al Servidor: "+message);
-            //mostrando a todos los clientes
-            enviarMensajeAClientesConectados(message, "azul");
+
+          String[] mensaje = message.split("~") ;
+               switch (mensaje[1]){
+
+                case "iniciarSesion":
+                    usuarios.put(usuario, mensaje[1].trim());
+                    sesiones.put(mensaje[1].trim(), usuario);
+                    break;
+                case "iniciarSesionAdmin":
+                    System.out.println("Se inicio la melma");
+
+                    sesionAdmin = usuario;
+                    break;
+                case "mensajeNuevo":
+
+                    if(sesionAdmin != null){
+                        System.out.println(mensaje[0]);
+                        sesionAdmin.getRemote().sendString(mensaje[0]);
+                    }
+                    break;
+
+                case "mensajeNuevoAdmin":
+                    String destino = mensaje[3];
+                    Session sesionDestino = sesiones.get(destino);
+                    if(sesionDestino != null){
+                        sesionDestino.getRemote().sendString(mensaje[0] +"~"+sesiones.get(usuario));
+                         }
+                    break;
+
+
+            }
+
+
+
 
         } catch (IOException e) {
             e.printStackTrace();

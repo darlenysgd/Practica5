@@ -166,24 +166,25 @@
                 </button>
             </div>
             <div class="chatbox__body">
-                <div class="chatbox__body__message chatbox__body__message--left">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
-                <div class="chatbox__body__message chatbox__body__message--right">
-                   <p>Nulla vel turpis vulputate, tincidunt lectus sed, porta arcu.</p>
+
+
+                <div class="chatbox__body__message chatbox__body__message--left  hidden" id="area_chat"  >
+                    <p class="cuerpo"></p>
+
+
                 </div>
             </div>
-            <form class="chatbox__credentials">
+            <div class="chatbox__credentials">
                 <div class="form-group">
                     <label for="inputName">Ingresa tu nombre:</label>
                     <input type="text" class="form-control" id="inputName" required>
                 </div>
-                <button type="submit" class="btn btn-success btn-block">Iniciar Chat</button>
-            </form>
-            <textarea   class="chatbox__message" placeholder="Write something interesting"></textarea>
+                <button id="enviar" class="btn btn-success btn-block">Iniciar Chat</button>
+            </div>
+            <textarea   class="chatbox__message" id="mensajeCliente" placeholder="Escribe tu mensaje aqui"></textarea>
            <div class="chatbox__message">
 
-                <button class="btn btn-success btn-block" id="enviar">Enviar</button>
+                <button class="btn btn-success btn-block" id="boton">Enviar</button>
            </div>
            </div>
 
@@ -195,12 +196,53 @@
 </script>
 
 <script type="text/javascript">
+
+    var webSocket;
+    var tiempoReconectar = 5000
+    var usuario;
+
+    $(document).ready(function(){
+        conectar();
+        $("#boton").click(function(){
+            var mensaje = $("#mensajeCliente");
+            console.log(mensaje.val());
+            var mensajeNuevo = $("#area_chat").clone();
+
+            mensajeNuevo.removeClass("hidden");
+            mensajeNuevo.find(".cuerpo").html(mensaje.val());
+            $(".chatbox__body").append(mensajeNuevo);
+            webSocket.send(mensaje.val()+"~mensajeNuevo");
+            mensaje.val("");
+
+        });
+
+
+    });
+
+
+    function conectar() {
+        webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/mensajeServidor");
+        //indicando los eventos:
+        webSocket.onmessage = function(data){recibirInformacionServidor(data);};
+        webSocket.onopen  = function(e){ console.log("Conectado - status "+this.readyState); };
+        webSocket.onclose = function(e){
+            console.log("Desconectado - status "+this.readyState);
+        };
+
+        function recibirInformacionServidor(mensaje) {
+            // console.log("Recibiendo del servidor: " + mensaje.data)
+            //$("#mensajeServidor").append(mensaje.data);
+        }
+    }
+
+
     (function($) {
         $(document).ready(function() {
+
             var $chatbox = $('.chatbox'),
                     $chatboxTitle = $('.chatbox__title'),
                     $chatboxTitleClose = $('.chatbox__title__close'),
-                    $chatboxCredentials = $('.chatbox__credentials');
+                    $enviar = $('#enviar');
             $chatboxTitle.on('click', function() {
                 $chatbox.toggleClass('chatbox--tray');
             });
@@ -211,7 +253,9 @@
             $chatbox.on('transitionend', function() {
                 if ($chatbox.hasClass('chatbox--closed')) $chatbox.remove();
             });
-            $chatboxCredentials.on('submit', function(e) {
+            $enviar.on('click', function(e) {
+                usuario = $("#inputName").val();
+                webSocket.send($("#inputName").val()+"~iniciarSesion");
                 e.preventDefault();
                 $chatbox.removeClass('chatbox--empty');
             });

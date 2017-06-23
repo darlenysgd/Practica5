@@ -13,16 +13,16 @@
                         </div>
                     </div>
 
-                    <div class="member_list">
-                        <ul class="list-unstyled">
-                            <li class="left clearfix">
+                    <div class="member_list aquiLaGente">
+
+                            <div class="left clearfix userArea hidden">
                        <div class="chat-body clearfix">
 
-                                    <div class="header_sec">
-                                        <strong class="primary-font">Jack Sparrow</strong>
+                                    <div class="header_sec " >
+                                        <strong class="primary-font userName"></strong>
                                     </div>
                                     </div>
-                            </li>
+                            </div>
 
 
                         </ul>
@@ -43,12 +43,11 @@
                     <div class="chat_area">
                         <ul class="list-unstyled">
                             <li class="left clearfix">
-                     <span class="chat-img1 pull-left">
+                     <span class="chat-img1 pull-left aquiAbajo">
                          </span>
-                                <div class="chat-body1 clearfix">
-                                    <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia.</p>
-                                    <div class="chat_time pull-right">09:40PM</div>
-                                </div>
+                                <div class="chat-body1 clearfix hidden" id="areaMensaje">
+                                    <p class="areaMensaje"></p>
+                                                                   </div>
                             </li>
 
 
@@ -67,4 +66,70 @@
         </div>
     </div>
 </div>
-<#include "Includes/Footer.ftl">
+
+<!-- Footer -->
+<footer>
+    <div class="row">
+        <div class="col-lg-12">
+            <p>Copyright &copy; Lit AF 2017</p>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</footer>
+
+</div>
+<!-- /.container -->
+
+<!-- jQuery -->
+<script src="js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+
+</body>
+
+<script type="text/javascript">
+    var webSocket;
+
+
+    $(document).ready(function() {
+        conectar();
+        function conectar() {
+            webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/mensajeServidor");
+            //indicando los eventos:
+            webSocket.onmessage = function (data) {
+                recibirInformacionServidor(data);
+            };
+            webSocket.onopen = function (e) {
+                console.log("Conectado - status " + this.readyState);
+                webSocket.send("naldjfalj~iniciarSesionAdmin");
+            };
+            webSocket.onclose = function (e) {
+                console.log("Desconectado - status " + this.readyState);
+            };
+
+        }
+
+
+        function recibirInformacionServidor(mensaje) {
+            var mensajeNuevo = $("#areaMensaje").clone();
+            var usuarios = $()
+
+            mensajeNuevo.removeClass("hidden");
+            var mensajeRecibido = mensaje.split("~");
+            mensajeNuevo.find(".areaMensaje").html(mensajeRecibido[1]);
+
+            $(".aquiAbajo").append(mensajeRecibido[0]);
+            $(".aquiLaGente").append();
+
+
+        }
+
+
+    });
+
+
+</script>
+
+</html>

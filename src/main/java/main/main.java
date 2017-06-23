@@ -66,6 +66,9 @@ public class main {
         usuario1 = new Usuario("admin", "", "admin", true, true);
         listaUsuarios.add(usuario1);
 
+        webSocket("/mensajeServidor", ServidorMensajesWebSocketHandler.class);
+        init();
+
         before("/NuevoUsuario", (request, response) -> {
 
            String str = request.session().attribute("usuario");
@@ -575,8 +578,7 @@ public class main {
             }, freeMarkerEngine );
 
 
-        webSocket("/mensajeServidor", ServidorMensajesWebSocketHandler.class);
-        init();
+
     }
 
 
