@@ -40,18 +40,17 @@
                     </div><!--new_message_head-->
 
                     <div class="chat_area">
-                        <ul class="list-unstyled">
-                            <li class="left clearfix">
-                     <span class="chat-img1 pull-left aquiAbajo">
-                         </span>
-                                <div class="chat-body1 clearfix hidden" id="areaMensaje">
-                                    <p class="areaMensaje"></p>
-                                                                   </div>
-                            </li>
+                        <div class="list-unstyled">
+                            <br>
+                            <div class="left clearfix aquiAbajo">
+                                <div class="chat-body1 clearfix hidden " id="areaMensaje">
+                                    <p class="cajaMensaje"></p>
+                                </div>
+                            </div>
 
 
 
-                        </ul>
+                        </div>
                     </div><!--chat_area-->
                     <div class="message_write">
                         <textarea class="form-control" placeholder="type a message"></textarea>
@@ -113,14 +112,14 @@
 
         function recibirInformacionServidor(mensaje) {
             var mensajeNuevo = $("#areaMensaje").clone();
-            var usuarios = $()
+           // var usuarios = $()
 
             mensajeNuevo.removeClass("hidden");
-            var mensajeRecibido = mensaje.split("~");
-            mensajeNuevo.find(".areaMensaje").html(mensajeRecibido[1]);
+            var mensajeRecibido = mensaje.data.split("~");
+            mensajeNuevo.find(".cajaMensaje").html(mensajeRecibido[0]);
 
-            $(".aquiAbajo").append(mensajeRecibido[0]);
-            $(".aquiLaGente").append();
+            $(".aquiAbajo").append(mensajeNuevo);
+           // $(".aquiLaGente").append();
 
 
         }
