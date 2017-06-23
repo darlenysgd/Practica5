@@ -5,6 +5,7 @@ import entidades.Comentario;
 import entidades.Etiqueta;
 import entidades.Usuario;
 import freemarker.template.Configuration;
+import org.eclipse.jetty.websocket.api.Session;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
@@ -12,6 +13,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Arrays;
 import entidades.Articulo;
+
+import java.io.IOException;
 
 import javax.persistence.Query;
 
@@ -51,7 +54,7 @@ public class main {
         FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine(configuration);
 
 
-        usuario1 = new Usuario("admin", "", "admin", true, true);
+
         BootStrapService.getInstancia().init();
         listaUsuarios.add(usuario1);
 
@@ -60,7 +63,7 @@ public class main {
         listaUsuarios = UsuariosServices.getInstancia().findAll();
         lista = ArticuloServices.getInstancia().findAll();
         listaEtiquetas = EtiquetaServices.getInstancia().findAll();
-
+        usuario1 = new Usuario("admin", "", "admin", true, true);
         listaUsuarios.add(usuario1);
 
         before("/NuevoUsuario", (request, response) -> {
@@ -180,6 +183,14 @@ public class main {
 
 
         }, freeMarkerEngine);
+
+
+        get("/chatRoom", (request, response) ->{
+            Map<String, Object> attributes = new HashMap<>();
+
+            return new ModelAndView(attributes, "chatview.ftl");
+        }, freeMarkerEngine);
+
 
         get("/Home/tags/:indice", (request, response) -> {
 
@@ -564,7 +575,10 @@ public class main {
             }, freeMarkerEngine );
 
 
-
+        webSocket("/mensajeServidor", ServidorMensajesWebSocketHandler.class);
+        init();
     }
+
+
 }
 

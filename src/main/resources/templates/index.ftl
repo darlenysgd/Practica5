@@ -23,8 +23,10 @@
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <script type="text/javascript" src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+         <script type="text/javascript" src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+         <script src="/js/bootstrap.min.js"></script>
+
     <![endif]-->
 
 </head>
@@ -147,15 +149,74 @@
             <!-- /.row -->
         </footer>
 
-    </div>
     <!-- /.container -->
+        <div class="chatbox chatbox--tray chatbox--empty">
+            <div class="chatbox__title">
+                <h5><a href="#">Chat</a></h5>
+                <button class="chatbox__title__tray">
+                    <span></span>
+                </button>
+                <button class="chatbox__title__close">
+            <span>
+                <svg viewBox="0 0 12 12" width="12px" height="12px">
+                    <line stroke="#FFFFFF" x1="11.75" y1="0.25" x2="0.25" y2="11.75"></line>
+                    <line stroke="#FFFFFF" x1="11.75" y1="11.75" x2="0.25" y2="0.25"></line>
+                </svg>
+            </span>
+                </button>
+            </div>
+            <div class="chatbox__body">
+                <div class="chatbox__body__message chatbox__body__message--left">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                </div>
+                <div class="chatbox__body__message chatbox__body__message--right">
+                   <p>Nulla vel turpis vulputate, tincidunt lectus sed, porta arcu.</p>
+                </div>
+            </div>
+            <form class="chatbox__credentials">
+                <div class="form-group">
+                    <label for="inputName">Ingresa tu nombre:</label>
+                    <input type="text" class="form-control" id="inputName" required>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Iniciar Chat</button>
+            </form>
+            <textarea   class="chatbox__message" placeholder="Write something interesting"></textarea>
+           <div class="chatbox__message">
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+                <button class="btn btn-success btn-block" id="enviar">Enviar</button>
+           </div>
+           </div>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
 
 </body>
+
+<script
+        type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+</script>
+
+<script type="text/javascript">
+    (function($) {
+        $(document).ready(function() {
+            var $chatbox = $('.chatbox'),
+                    $chatboxTitle = $('.chatbox__title'),
+                    $chatboxTitleClose = $('.chatbox__title__close'),
+                    $chatboxCredentials = $('.chatbox__credentials');
+            $chatboxTitle.on('click', function() {
+                $chatbox.toggleClass('chatbox--tray');
+            });
+            $chatboxTitleClose.on('click', function(e) {
+                e.stopPropagation();
+                $chatbox.addClass('chatbox--closed');
+            });
+            $chatbox.on('transitionend', function() {
+                if ($chatbox.hasClass('chatbox--closed')) $chatbox.remove();
+            });
+            $chatboxCredentials.on('submit', function(e) {
+                e.preventDefault();
+                $chatbox.removeClass('chatbox--empty');
+            });
+        });
+    })(jQuery);
+</script>
 
 </html>
