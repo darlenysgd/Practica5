@@ -27,9 +27,6 @@ public class ServidorMensajesWebSocketHandler {
     public static HashMap <String, Session> sesiones = new HashMap<>();
     public static Session sesionAdmin;
 
-
-
-
     /**
      * Una vez conectado el cliente se activa este metodo.
      * @param usuario
@@ -65,11 +62,18 @@ public class ServidorMensajesWebSocketHandler {
         try {
 
           String[] mensaje = message.split("~") ;
+
+
+
+              System.out.println(mensaje[0]);
+              System.out.println(mensaje[1]);
+
+
                switch (mensaje[1]){
 
                 case "iniciarSesion":
-                    usuarios.put(usuario, mensaje[1].trim());
-                    sesiones.put(mensaje[1].trim(), usuario);
+                    usuarios.put(usuario, mensaje[0].trim());
+                    sesiones.put(mensaje[0].trim(), usuario);
                     break;
                 case "iniciarSesionAdmin":
                     System.out.println("Se inicio la melma");
@@ -80,16 +84,18 @@ public class ServidorMensajesWebSocketHandler {
 
                     if(sesionAdmin != null){
                         System.out.println(mensaje[0]);
-                        sesionAdmin.getRemote().sendString(mensaje[0]);
+                        sesionAdmin.getRemote().sendString(mensaje[0] +"~"+ usuarios.get(usuario) );
                     }
                     break;
 
                 case "mensajeNuevoAdmin":
-                    String destino = mensaje[3];
+                    String destino = mensaje[2];
+
                     Session sesionDestino = sesiones.get(destino);
                     if(sesionDestino != null){
+                        System.out.println(destino);
                         sesionDestino.getRemote().sendString(mensaje[0] +"~"+sesiones.get(usuario));
-                         }
+                    }
                     break;
 
 

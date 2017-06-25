@@ -205,7 +205,6 @@
         conectar();
         $("#boton").click(function(){
             var mensaje = $("#mensajeCliente");
-            console.log(mensaje.val());
             var mensajeNuevo = $("#area_chat").clone();
 
             mensajeNuevo.removeClass("hidden");
@@ -217,27 +216,31 @@
         });
 
 
-    });
+        function conectar() {
+            webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/mensajeServidor");
+            //indicando los eventos:
+            webSocket.onmessage = function(data){recibirInformacionServidor(data);};
+            webSocket.onopen  = function(e){ console.log("Conectado - status "+this.readyState); };
+            webSocket.onclose = function(e){
+                console.log("Desconectado - status "+this.readyState);
+            };
 
 
-    function conectar() {
-        webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/mensajeServidor");
-        //indicando los eventos:
-        webSocket.onmessage = function(data){recibirInformacionServidor(data);};
-        webSocket.onopen  = function(e){ console.log("Conectado - status "+this.readyState); };
-        webSocket.onclose = function(e){
-            console.log("Desconectado - status "+this.readyState);
-        };
+        }
 
         function recibirInformacionServidor(mensaje) {
-            // console.log("Recibiendo del servidor: " + mensaje.data)
-            //$("#mensajeServidor").append(mensaje.data);
+
+            var mensajeNuevo = $("#area_chat").clone();
+
+            mensajeNuevo.removeClass("hidden");
+            var mensajeRecibido = mensaje.data.split("~");
+            mensajeNuevo.find(".cuerpo").html(mensajeRecibido[0]);
+            console.log(mensajeRecibido[0]);
+            $(".chatbox__body").append(mensajeNuevo);
+
         }
-    }
 
 
-    (function($) {
-        $(document).ready(function() {
 
             var $chatbox = $('.chatbox'),
                     $chatboxTitle = $('.chatbox__title'),
@@ -259,8 +262,21 @@
                 e.preventDefault();
                 $chatbox.removeClass('chatbox--empty');
             });
-        });
-    })(jQuery);
+
+
+
+    });
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 </html>

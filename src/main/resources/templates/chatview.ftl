@@ -13,19 +13,20 @@
                         </div>
                     </div>
 
-                    <div class="member_list aquiLaGente">
+                    <div class="member_list ">
 
-                            <div class="left clearfix userArea hidden">
-                       <div class="chat-body clearfix">
+                            <div class="left clearfix">
+                       <div class="chat-body clearfix aquiLaGente">
 
-                                    <div class="header_sec " >
+                                    <div class="header_sec hidden" id="userArea">
                                         <strong class="primary-font userName"></strong>
                                     </div>
                                     </div>
                             </div>
 
-                        </ul>
-                    </div></div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!--chat_sidebar-->
 
@@ -53,11 +54,11 @@
                         </div>
                     </div><!--chat_area-->
                     <div class="message_write">
-                        <textarea class="form-control" placeholder="type a message"></textarea>
+                        <textarea class="form-control" id="mensajeAdmin" placeholder="Escriba su mensaje"></textarea>
                         <div class="clearfix"></div>
                         <div class="chat_bottom">
-                            <a href="#" class="pull-right btn btn-success">
-                                Send</a></div>
+                            <button class="pull-right btn btn-success btn-block" id="boton">
+                                Send</button></div>
                     </div>
                 </div>
             </div> <!--message_section-->
@@ -89,10 +90,25 @@
 
 <script type="text/javascript">
     var webSocket;
+    var usuario;
 
 
     $(document).ready(function() {
         conectar();
+
+        $("#boton").click(function(){
+            var mensaje = $("#mensajeAdmin");
+            var mensajeNuevo = $("#areaMensaje").clone();
+
+            mensajeNuevo.removeClass("hidden");
+            mensajeNuevo.find(".cajaMensaje").html(mensaje.val());
+            $(".aquiAbajo").append(mensajeNuevo);
+            webSocket.send(mensaje.val()+"~mensajeNuevoAdmin"+"~"+usuario);
+            mensaje.val("");
+
+        });
+
+
         function conectar() {
             webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/mensajeServidor");
             //indicando los eventos:
@@ -103,26 +119,30 @@
                 console.log("Conectado - status " + this.readyState);
                 webSocket.send("naldjfalj~iniciarSesionAdmin");
             };
-            webSocket.onclose = function (e) {
-                console.log("Desconectado - status " + this.readyState);
-            };
+         //   webSocket.onclose = function (e) {
+           //     console.log("Desconectado - status " + this.readyState);
+          //  };
 
         }
 
 
         function recibirInformacionServidor(mensaje) {
             var mensajeNuevo = $("#areaMensaje").clone();
-           // var usuarios = $()
+            var usuarios = $("#userArea").clone();
 
             mensajeNuevo.removeClass("hidden");
+            usuarios.removeClass("hidden");
             var mensajeRecibido = mensaje.data.split("~");
+            usuario = mensajeRecibido[1];
             mensajeNuevo.find(".cajaMensaje").html(mensajeRecibido[0]);
+            usuarios.find(".userName").html(mensajeRecibido[1]);
 
             $(".aquiAbajo").append(mensajeNuevo);
-           // $(".aquiLaGente").append();
+            $(".aquiLaGente").append(usuarios);
 
 
         }
+
 
 
     });
