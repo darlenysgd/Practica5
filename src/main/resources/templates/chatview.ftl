@@ -115,6 +115,7 @@
             webSocket.onmessage = function (data) {
                 recibirInformacionServidor(data);
             };
+
             webSocket.onopen = function (e) {
                 console.log("Conectado - status " + this.readyState);
                 webSocket.send("naldjfalj~iniciarSesionAdmin");
