@@ -119,9 +119,10 @@
                 console.log("Conectado - status " + this.readyState);
                 webSocket.send("naldjfalj~iniciarSesionAdmin");
             };
-         //   webSocket.onclose = function (e) {
-           //     console.log("Desconectado - status " + this.readyState);
-          //  };
+             webSocket.onclose = function (e) {
+               console.log("Desconectado - status " + this.readyState);
+
+            };
 
         }
 
