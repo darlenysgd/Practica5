@@ -1,6 +1,7 @@
 package main;
 
 import Servicios.*;
+import com.google.gson.Gson;
 import entidades.Comentario;
 import entidades.Etiqueta;
 import entidades.Usuario;
@@ -35,21 +36,23 @@ public class main {
     static boolean calificoComment;
     static Usuario usuario1 = new Usuario();
     static List<Comentario> listaComentarios = new ArrayList<>();
-    static int pag = 1;
+    static int pag = 0;
+    static boolean next = true;
+
+   static int pagenum = 0;
 
     public static void main(String[] args) {
+
 
         staticFiles.location("/");
         enableDebugScreen();
         Articulo articulo = new Articulo();
 
 
-
         ArrayList<Comentario> comentarios = new ArrayList<>();
 
 
-
-        Configuration configuration=new Configuration(Configuration.VERSION_2_3_23);
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
         configuration.setClassForTemplateLoading(main.class, "/templates");
         FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine(configuration);
 
@@ -58,7 +61,7 @@ public class main {
         BootStrapService.getInstancia().init();
         listaUsuarios.add(usuario1);
 
-       // articulo.setArticulos(listaArticulos);
+        // articulo.setArticulos(listaArticulos);
 
         listaUsuarios = UsuariosServices.getInstancia().findAll();
         lista = ArticuloServices.getInstancia().findAll();
@@ -71,16 +74,16 @@ public class main {
 
         before("/NuevoUsuario", (request, response) -> {
 
-           String str = request.session().attribute("usuario");
-            if (str == null || !usuario1.isAdministrator()){
-                    response.redirect("/login");
+            String str = request.session().attribute("usuario");
+            if (str == null || !usuario1.isAdministrator()) {
+                response.redirect("/login");
             }
         });
 
         before("/NuevoPost", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null || !usuario1.isAutor()){
+            if (str == null || !usuario1.isAutor()) {
                 response.redirect("/login");
             }
         });
@@ -89,7 +92,7 @@ public class main {
         before("/comentar/:id", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null ){
+            if (str == null) {
                 response.redirect("/login");
             }
         });
@@ -97,7 +100,7 @@ public class main {
         before("/like/:id", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null ){
+            if (str == null) {
                 response.redirect("/login");
             }
         });
@@ -105,7 +108,7 @@ public class main {
         before("/dislike/:id", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null ){
+            if (str == null) {
                 response.redirect("/login");
             }
         });
@@ -113,7 +116,7 @@ public class main {
         before("/likeComment/:indiceComment/:indiceArt", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null ){
+            if (str == null) {
                 response.redirect("/login");
             }
         });
@@ -121,14 +124,14 @@ public class main {
         before("/dislikeComment/:indiceComment/:indiceArt", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null ){
+            if (str == null) {
                 response.redirect("/login");
             }
         });
         before("/eliminarArticulo/:id", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null || !usuario1.isAutor()){
+            if (str == null || !usuario1.isAutor()) {
                 response.redirect("/login");
             }
         });
@@ -136,7 +139,7 @@ public class main {
         before("/modificarArticulo/:indice", (request, response) -> {
 
             String str = request.session().attribute("usuario");
-            if (str == null || !usuario1.isAutor()){
+            if (str == null || !usuario1.isAutor()) {
                 response.redirect("/login");
             }
         });
@@ -144,13 +147,70 @@ public class main {
 
         get("/Home", (request, response) -> {
 
+            if (pagenum < 1){
+                pagenum = 1;
+            }
+            List<Articulo> artspage = ArticuloServices.getInstancia().pagination(pagenum);
+
+
             Map<String, Object> attributes = new HashMap<>();
 
-            response.redirect("/HomePage/" + 1);
-            return null;
+
+
+            boolean mas = false;
+            boolean vacio = true;
+
+            if (artspage == null) {
+
+                vacio = false;
+
+            } else {
+                mas = true;
+                attributes.put("articulos",artspage);
+
+            }
+
+            attributes.put("vacio", vacio);
+            attributes.put("mas", mas);
+            attributes.put("etiquetas", listaEtiquetas);
+            attributes.put("numPag", pagenum);
+
+            return new ModelAndView(attributes, "index.ftl");
+
 
 
         }, freeMarkerEngine);
+
+        get("/HomeNext", (request, response) -> {
+
+            if (next) {
+                pagenum++;
+            }
+
+            next = true;
+
+            response.redirect("/Home");
+            return null;
+
+
+
+        });
+
+        get("/HomeBack", (request, response) -> {
+
+            if (pagenum>1){
+                pagenum--;
+
+            }
+
+           next = false;
+
+            response.redirect("/Home");
+
+            return null;
+
+
+        });
 
         get("/HomePage/:numPag", (request, response) -> {
 
@@ -160,13 +220,13 @@ public class main {
             boolean mas = false;
             boolean vacio = true;
 
-
-
             List<Articulo> subLista = ArticuloServices.getInstancia().pagination(numPag);
 
-            if (ArticuloServices.getInstancia().pagination(numPag) == null){
+            if (ArticuloServices.getInstancia().pagination(numPag) == null) {
 
                 vacio = false;
+
+
 
 
             } else {
@@ -175,15 +235,11 @@ public class main {
                 attributes.put("articulos", subLista);
 
             }
-
-
             attributes.put("vacio", vacio);
             attributes.put("mas", mas);
             attributes.put("numPag", numPag);
             attributes.put("etiquetas", listaEtiquetas);
             return new ModelAndView(attributes, "index.ftl");
-
-
 
         }, freeMarkerEngine);
 
@@ -201,10 +257,10 @@ public class main {
             int indice = Integer.parseInt(request.params("indice"));
 
             List<Articulo> arts = new ArrayList<>();
-            for(Articulo art : lista){
-                for(Etiqueta et: art.getEtiquetas()){
-                    if(et.getEtiqueta().equals(listaEtiquetas.get(indice).getEtiqueta())){
-                       arts.add(art);
+            for (Articulo art : lista) {
+                for (Etiqueta et : art.getEtiquetas()) {
+                    if (et.getEtiqueta().equals(listaEtiquetas.get(indice).getEtiqueta())) {
+                        arts.add(art);
                     }
                 }
             }
@@ -220,7 +276,7 @@ public class main {
             Map<String, Object> attributes = new HashMap<>();
             int indice = Integer.parseInt(request.params("indice"));
             int numPag = Integer.parseInt(request.params("numPag"));
-            int numPagAux = numPag*5;
+            int numPagAux = numPag * 5;
             boolean mas = false;
             boolean vacio = true;
 
@@ -256,36 +312,34 @@ public class main {
             Map<String, Object> attributes = new HashMap<>();
             int indice = Integer.parseInt(request.params("indice"));
 
-            attributes.put("articulo", lista.get(indice + ((pag -1) *5)));
+            attributes.put("articulo", lista.get(indice + ((pag - 1) * 5)));
 
 
-            if(lista.get(indice + ((pag -1) *5)).getComentarios() != null) {
+            if (lista.get(indice + ((pag - 1) * 5)).getComentarios() != null) {
 
-                attributes.put("comentarios", lista.get(indice + ((pag -1) *5)).getComentarios());
-            }
-            else
-            {
+                attributes.put("comentarios", lista.get(indice + ((pag - 1) * 5)).getComentarios());
+            } else {
                 x = false;
             }
 
             attributes.put("comentarioNull", x);
 
-                if(lista.get(indice + ((pag -1) *5)).getEtiquetas() != null) {
+            if (lista.get(indice + ((pag - 1) * 5)).getEtiquetas() != null) {
 
-                attributes.put("etiquetas", lista.get(indice + ((pag -1) *5)).getEtiquetas());
+                attributes.put("etiquetas", lista.get(indice + ((pag - 1) * 5)).getEtiquetas());
             }
 
             attributes.put("indice", indice);
             attributes.put("logged", logged);
-             return new ModelAndView(attributes, "entrada.ftl");
-            }, freeMarkerEngine);
+            return new ModelAndView(attributes, "entrada.ftl");
+        }, freeMarkerEngine);
 
 
         get("/modificarArticulo/:indice", (request, response) -> {
 
             Map<String, Object> attributes = new HashMap<>();
             int indice = Integer.parseInt(request.params("indice"));
-            attributes.put("articulo", lista.get(indice + ((pag -1) *5)));
+            attributes.put("articulo", lista.get(indice + ((pag - 1) * 5)));
             attributes.put("indice", indice);
             return new ModelAndView(attributes, "modificarPost.ftl");
         }, freeMarkerEngine);
@@ -296,7 +350,7 @@ public class main {
             Articulo art = new Articulo();
 
             int indice = Integer.parseInt(request.params("indice"));
-            art.setId(lista.get(indice + ((pag -1) *5)).getId());
+            art.setId(lista.get(indice + ((pag - 1) * 5)).getId());
 
             art.setTitulo(request.queryParams("titulo"));
             art.setCuerpo(request.queryParams("contenido"));
@@ -313,14 +367,13 @@ public class main {
 
             Etiqueta x;
 
-            for(String et: listaEtiquetas1){
+            for (String et : listaEtiquetas1) {
                 x = EtiquetaServices.getInstancia().findEtiqueta(et);
-                if(x == null){
+                if (x == null) {
 
                     Etiqueta etiqueta = new Etiqueta(et);
                     aux.add(etiqueta);
-                }
-                else{
+                } else {
 
                     aux.add(x);
                 }
@@ -335,13 +388,13 @@ public class main {
             return null;
         }, freeMarkerEngine);
 
-        post("/like/:indice", (request, response) ->{
+        post("/like/:indice", (request, response) -> {
 
             int indice = Integer.parseInt(request.params("indice"));
             if (califico == false) {
-                lista.get(indice + ((pag -1) *5)).setLikes(lista.get(indice + ((pag -1) *5)).getLikes() + 1);
-                Articulo art = lista.get(indice+ ((pag -1) *5));
-                art.setLikes(lista.get(indice + ((pag -1) *5)).getLikes());
+                lista.get(indice + ((pag - 1) * 5)).setLikes(lista.get(indice + ((pag - 1) * 5)).getLikes() + 1);
+                Articulo art = lista.get(indice + ((pag - 1) * 5));
+                art.setLikes(lista.get(indice + ((pag - 1) * 5)).getLikes());
                 ArticuloServices.getInstancia().editar(art);
                 califico = true;
                 //ACTUALIZAR LIKE EN BD
@@ -350,14 +403,14 @@ public class main {
             return null;
         }, freeMarkerEngine);
 
-        post("/dislike/:indice", (request, response) ->{
+        post("/dislike/:indice", (request, response) -> {
 
-                int indice = Integer.parseInt(request.params("indice"));
+            int indice = Integer.parseInt(request.params("indice"));
             if (califico == false) {
-                lista.get(indice + ((pag -1) *5)).setDislikes(lista.get(indice + ((pag -1) *5)).getDislikes() + 1);
+                lista.get(indice + ((pag - 1) * 5)).setDislikes(lista.get(indice + ((pag - 1) * 5)).getDislikes() + 1);
 
-                Articulo art = lista.get(indice+ ((pag -1) *5));
-                art.setDislikes(lista.get(indice+ ((pag -1) *5)).getDislikes());
+                Articulo art = lista.get(indice + ((pag - 1) * 5));
+                art.setDislikes(lista.get(indice + ((pag - 1) * 5)).getDislikes());
                 ArticuloServices.getInstancia().editar(art);
                 califico = true;
             }
@@ -365,14 +418,14 @@ public class main {
             return null;
         }, freeMarkerEngine);
 
-        post("/likeComment/:indiceComment/:indiceArt", (request, response) ->{
+        post("/likeComment/:indiceComment/:indiceArt", (request, response) -> {
 
             int indice = Integer.parseInt(request.params("indiceComment"));
             int indiceArticulo = Integer.parseInt(request.params("indiceArt"));
             if (calificoComment == false) {
-                lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice).setLikes(lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice).getLikes() + 1);
-                Comentario com = lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice);
-                com.setLikes(lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice).getLikes());
+                lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).setLikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getLikes() + 1);
+                Comentario com = lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice);
+                com.setLikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getLikes());
                 ComentarioServices.getInstancia().editar(com);
                 calificoComment = true;
                 //ACTUALIZAR LIKE EN BD
@@ -382,14 +435,14 @@ public class main {
         }, freeMarkerEngine);
 
 
-        post("/dislikeComment/:indiceComment/:indiceArt", (request, response) ->{
+        post("/dislikeComment/:indiceComment/:indiceArt", (request, response) -> {
 
             int indice = Integer.parseInt(request.params("indiceComment"));
             int indiceArticulo = Integer.parseInt(request.params("indiceArt"));
             if (calificoComment == false) {
-                lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice).setDislikes(lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice).getDislikes() + 1);
-                Comentario com = lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice);
-                com.setDislikes(lista.get(indiceArticulo + ((pag -1) *5)).getComentarios().get(indice).getDislikes());
+                lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).setDislikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getDislikes() + 1);
+                Comentario com = lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice);
+                com.setDislikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getDislikes());
                 ComentarioServices.getInstancia().editar(com);
                 calificoComment = true;
                 //ACTUALIZAR LIKE EN BD
@@ -403,8 +456,8 @@ public class main {
             Articulo art = new Articulo();
             String str = request.session().attribute("usuario");
             Usuario usr = new Usuario();
-            for(Usuario aux: listaUsuarios){
-                if(aux.getUsername().equals(str)){
+            for (Usuario aux : listaUsuarios) {
+                if (aux.getUsername().equals(str)) {
                     usr = aux;
                 }
             }
@@ -416,24 +469,22 @@ public class main {
             String tags = request.queryParams("etiquetas");
 
 
-
             tags = tags.replaceAll(" ", "");
 
             ArrayList<String> listaEtiquetas1 = new ArrayList<>(Arrays.asList(tags.split(",")));
             List<Etiqueta> aux = new ArrayList<>();
 
 
-            Etiqueta x ;
+            Etiqueta x;
 
 
-            for(String et: listaEtiquetas1){
+            for (String et : listaEtiquetas1) {
                 x = EtiquetaServices.getInstancia().findEtiqueta(et);
-                if(x == null){
+                if (x == null) {
 
                     Etiqueta etiqueta = new Etiqueta(et);
                     aux.add(etiqueta);
-                }
-                else{
+                } else {
 
                     aux.add(x);
                 }
@@ -446,7 +497,7 @@ public class main {
 
             response.redirect("/Home");
 
-            return  null;
+            return null;
 
         }, freeMarkerEngine);
 
@@ -455,8 +506,8 @@ public class main {
             String str = request.session().attribute("usuario");
             System.out.println(str);
             Usuario usr = new Usuario();
-            for(Usuario aux: listaUsuarios){
-                if(aux.getUsername().equals(str)){
+            for (Usuario aux : listaUsuarios) {
+                if (aux.getUsername().equals(str)) {
                     usr = aux;
 
                 }
@@ -465,9 +516,9 @@ public class main {
             int artId = Integer.parseInt(request.params("id"));
             Articulo art = new Articulo();
 
-            for(Articulo x : lista){
+            for (Articulo x : lista) {
 
-                if(x.getId() == artId){
+                if (x.getId() == artId) {
                     art = x;
                 }
             }
@@ -476,8 +527,6 @@ public class main {
             art.getComentarios().add(cm);
             ComentarioServices.getInstancia().crear(cm);
             ArticuloServices.getInstancia().editar(art);
-
-
 
             response.redirect("/Home");
 
@@ -494,7 +543,7 @@ public class main {
             lista = ArticuloServices.getInstancia().findAll();
 
 
-              response.redirect("/Home");
+            response.redirect("/Home");
 
             return null;
 
@@ -509,7 +558,7 @@ public class main {
             usr.setPassword(request.queryParams("clave"));
             String TipoUsuario = request.queryParams("tipoUsuario");
 
-            switch (TipoUsuario){
+            switch (TipoUsuario) {
                 case "Administrador":
                     usr.setAdministrator(true);
                     usr.setAutor(true);
@@ -518,8 +567,6 @@ public class main {
                     usr.setAutor(true);
                     usr.setAdministrator(false);
             }
-
-
 
             UsuariosServices.getInstancia().crear(usr);
 
@@ -531,11 +578,11 @@ public class main {
 
         }, freeMarkerEngine);
 
-        get ("/login", (request, response) ->{
+        get("/login", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
 
             return new ModelAndView(attributes, "login.ftl");
-                }, freeMarkerEngine );
+        }, freeMarkerEngine);
 
         post("/loginForm", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
@@ -545,7 +592,7 @@ public class main {
             int aux = 0;
 
 
-            for(Usuario usr : listaUsuarios) {
+            for (Usuario usr : listaUsuarios) {
 
                 if (usr.getUsername().equals(NombreDeUsuario) && usr.getPassword().equals(clave)) {
                     aux = 1;
@@ -561,13 +608,13 @@ public class main {
 
             }
 
-            if (aux == 1){
-              response.redirect("/login");
-             }
+            if (aux == 1) {
+                response.redirect("/login");
+            }
 
-              return null;
+            return null;
 
-           }, freeMarkerEngine);
+        }, freeMarkerEngine);
         get("/cerrarSesion", (request, response) -> {
 
             request.session().invalidate();
@@ -575,7 +622,7 @@ public class main {
             usuario1 = null;
             response.redirect("/Home");
             return null;
-            }, freeMarkerEngine );
+        }, freeMarkerEngine);
 
 
 

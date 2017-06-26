@@ -19,7 +19,9 @@
 
     <link href="/css/Estilos.css" rel="stylesheet">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+    <script src="/js/MostrarArticulos.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -72,41 +74,49 @@
                     Programación Web
                     <small>Práctica #3</small>
                 </h1>
+
+                <div id="VerArticulos">
+
                 <#if vacio>
-                 <#list articulos as art>
-                    <h2>
-                        <a href="/Entrada/${art_index}">${art.getTitulo()}</a>
-                    </h2>
-                    <p>
-                        Autor: <a href="">${art.getAutor().getNombre()}</a>
-                    </p>
-                    <p><span class="glyphicon glyphicon-time"></span>${art.getFecha()}</p>
-                    <hr>
+                    <#list articulos as art>
 
-                    <#assign cuerpo=art.getCuerpo()>
-                    <#if cuerpo?length &lt; 70>
+                        <h2>
+                            <a href="/Entrada/${art_index}">${art.getTitulo()}</a>
+                        </h2>
+                        <p>
+                            Autor: <a href="">${art.getAutor().getNombre()}</a>
+                        </p>
+                        <p><span class="glyphicon glyphicon-time"></span>${art.getFecha()}</p>
+                        <hr>
+
+                        <#assign cuerpo=art.getCuerpo()>
+                        <#if cuerpo?length &lt; 70>
                         ${cuerpo}
-                    <#else>
+                        <#else>
                         ${cuerpo?substring(0,70) + "..."}
-                    </#if>
+                        </#if>
 
-                    <br><br>
-                    <a class="btn btn-primary" href="/Entrada/${art_index}">Leer Más<span class="glyphicon glyphicon-chevron-right"></span></a>
+                        <br><br>
+                        <a class="btn btn-primary" href="/Entrada/${art_index}">Leer Más<span class="glyphicon glyphicon-chevron-right"></span></a>
 
-                    <hr>
+                        <hr>
 
-                </#list>
-                    </#if>
+                    </#list>
+                </#if>
 
+                </div>
+
+                <div id="pagg"></div>
                 <#if numPag gt 1 >
-                    <form action="/HomePage/${numPag -1 }" method="get">
-                        <button class="btn btn-icon">Anterior</button>
+                    <form>
+                        <button class="btn btn-icon" onclick="paginar2()">Anterior</button>
                     </form>
+
 
                 </#if>
                 <#if mas>
-                    <form action="/HomePage/${numPag +1 }" method="get">
-                        <button class="btn btn-icon">Siguiente</button>
+                    <form>
+                        <button class="btn btn-icon" onclick="paginar()">Siguiente</button>
                     </form>
                 </#if>
                 <nav style="float:right;">
