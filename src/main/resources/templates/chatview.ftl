@@ -20,7 +20,7 @@
 
                                     <div class="header_sec hidden" id="userArea">
                                         <br>
-                                        <button class="userName btn btn-success" id="botonUsuario"></button>
+                                        <a href="#" class="userName" id="botonUsuario" ></a>
                                     </div>
                                     </div>
                             </div>
@@ -99,17 +99,6 @@
     $(document).ready(function() {
         conectar();
 
-       $("#botonUsuario").click(function() {
-           console.log("Pero ta entrando men");
-       });
-           // var name = $(this).html;
-            //console.log(name);
-            //$('#areaMensaje').each(function () {
-             //   if($(this).find(".cajaUsuario").html() !== name ){
-                  //  $(this).addClass("hidden");
-            //    }
-            //});
-       // });
 
         $("#boton").click(function(){
             var mensaje = $("#mensajeAdmin");
@@ -124,8 +113,6 @@
             mensaje.val("");
 
         });
-
-
 
 
         function conectar() {
@@ -175,6 +162,19 @@
             }
 
         }
+
+        $(document).on('click', '#botonUsuario', function(){
+            var name = $(this).html();
+            usuario = name;
+            $('#areaMensaje').each(function () {
+                var usuarioMensaje = $(this).find(".cajaUsuario").html();
+                console.log(usuarioMensaje);
+                //  if($(this).find(".cajaUsuario").html() !== name ){
+                //      $(this).addClass("hidden");
+                //   }
+            });
+        });
+
 
 
 
