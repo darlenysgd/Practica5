@@ -19,7 +19,8 @@
                        <div class="chat-body clearfix aquiLaGente">
 
                                     <div class="header_sec hidden" id="userArea">
-                                        <strong class="primary-font userName"></strong>
+                                        <br>
+                                        <button class="userName btn btn-success" id="botonUsuario"></button>
                                     </div>
                                     </div>
                             </div>
@@ -45,7 +46,9 @@
                             <br>
                             <div class="left clearfix aquiAbajo">
                                 <div class="chat-body1 clearfix hidden " id="areaMensaje">
-                                    <p class="cajaMensaje"></p>
+                                    <strong class="cajaUsuario"></strong>
+                                    <p class="cajaMensaje hidden"></p>
+                                    <p class="cuerpoUsuario hidden" style="color:red"></p>
                                 </div>
                             </div>
 
@@ -96,17 +99,33 @@
     $(document).ready(function() {
         conectar();
 
+       $("#botonUsuario").click(function() {
+           console.log("Pero ta entrando men");
+       });
+           // var name = $(this).html;
+            //console.log(name);
+            //$('#areaMensaje').each(function () {
+             //   if($(this).find(".cajaUsuario").html() !== name ){
+                  //  $(this).addClass("hidden");
+            //    }
+            //});
+       // });
+
         $("#boton").click(function(){
             var mensaje = $("#mensajeAdmin");
             var mensajeNuevo = $("#areaMensaje").clone();
 
             mensajeNuevo.removeClass("hidden");
+            mensajeNuevo.find(".cajaMensaje").removeClass("hidden");
             mensajeNuevo.find(".cajaMensaje").html(mensaje.val());
+            mensajeNuevo.find(".cajaUsuario").html("Administrador");
             $(".aquiAbajo").append(mensajeNuevo);
             webSocket.send(mensaje.val()+"~mensajeNuevoAdmin"+"~"+usuario);
             mensaje.val("");
 
         });
+
+
 
 
         function conectar() {
@@ -131,17 +150,29 @@
         function recibirInformacionServidor(mensaje) {
             var mensajeNuevo = $("#areaMensaje").clone();
             var usuarios = $("#userArea").clone();
-
+            var esta = false;
             mensajeNuevo.removeClass("hidden");
             usuarios.removeClass("hidden");
+            mensajeNuevo.find(".cuerpoUsuario").removeClass("hidden");
             var mensajeRecibido = mensaje.data.split("~");
             usuario = mensajeRecibido[1];
-            mensajeNuevo.find(".cajaMensaje").html(mensajeRecibido[0]);
+
+
+            mensajeNuevo.find(".cuerpoUsuario").html(mensajeRecibido[0]);
             usuarios.find(".userName").html(mensajeRecibido[1]);
-
+            mensajeNuevo.find(".cajaUsuario").html(mensajeRecibido[1]);
             $(".aquiAbajo").append(mensajeNuevo);
-            $(".aquiLaGente").append(usuarios);
+            $('.userName').each(function () {
+                   if($(this).html() === usuario){
+                    esta = true;
+                }
 
+            });
+
+
+            if (esta === false) {
+                $(".aquiLaGente").append(usuarios);
+            }
 
         }
 
