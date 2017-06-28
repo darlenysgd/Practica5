@@ -56,7 +56,7 @@
                         <a href="/cerrarSesion"><span class="dorado">Cerrar Sesion</span></a>
                     </li>
                     <li>
-                        <a href="/charRoom"><span class="dorado">Sala de Chat</span></a>
+                        <a href="/chatRoom"><span class="dorado">Sala de Chat</span></a>
                     </li>
                 </ul>
             </div>

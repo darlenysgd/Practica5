@@ -47,7 +47,7 @@
                             <div class="left clearfix aquiAbajo ">
                                 <div class="chat-body1 clearfix hidden zonaMensaje" id="areaMensaje">
                                     <strong class="cajaUsuario"></strong>
-                                    <strong class="cajaUsuarioAdmin"></strong>
+                                    <strong class="cajaUsuarioAdmin hidden"></strong>
                                     <p class="cajaMensaje hidden"></p>
                                     <p class="cuerpoUsuario hidden" style="color:red"></p>
                                 </div>
