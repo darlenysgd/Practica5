@@ -39,7 +39,7 @@ public class main {
     static int pag = 0;
     static boolean next = true;
 
-   static int pagenum = 0;
+   static int pagenum = 1;
 
     public static void main(String[] args) {
 
@@ -312,21 +312,23 @@ public class main {
             Map<String, Object> attributes = new HashMap<>();
             int indice = Integer.parseInt(request.params("indice"));
 
-            attributes.put("articulo", lista.get(indice + ((pag - 1) * 5)));
+
+            System.out.println();
+            attributes.put("articulo", lista.get(indice + ((pagenum - 1) * 5)));
 
 
-            if (lista.get(indice + ((pag - 1) * 5)).getComentarios() != null) {
+            if (lista.get(indice + ((pagenum - 1) * 5)).getComentarios() != null) {
 
-                attributes.put("comentarios", lista.get(indice + ((pag - 1) * 5)).getComentarios());
+                attributes.put("comentarios", lista.get(indice + ((pagenum - 1) * 5)).getComentarios());
             } else {
                 x = false;
             }
 
             attributes.put("comentarioNull", x);
 
-            if (lista.get(indice + ((pag - 1) * 5)).getEtiquetas() != null) {
+            if (lista.get(indice + ((pagenum - 1) * 5)).getEtiquetas() != null) {
 
-                attributes.put("etiquetas", lista.get(indice + ((pag - 1) * 5)).getEtiquetas());
+                attributes.put("etiquetas", lista.get(indice + ((pagenum - 1) * 5)).getEtiquetas());
             }
 
             attributes.put("indice", indice);
@@ -339,7 +341,7 @@ public class main {
 
             Map<String, Object> attributes = new HashMap<>();
             int indice = Integer.parseInt(request.params("indice"));
-            attributes.put("articulo", lista.get(indice + ((pag - 1) * 5)));
+            attributes.put("articulo", lista.get(indice + ((pagenum - 1) * 5)));
             attributes.put("indice", indice);
             return new ModelAndView(attributes, "modificarPost.ftl");
         }, freeMarkerEngine);
@@ -350,7 +352,7 @@ public class main {
             Articulo art = new Articulo();
 
             int indice = Integer.parseInt(request.params("indice"));
-            art.setId(lista.get(indice + ((pag - 1) * 5)).getId());
+            art.setId(lista.get(indice + ((pagenum - 1) * 5)).getId());
 
             art.setTitulo(request.queryParams("titulo"));
             art.setCuerpo(request.queryParams("contenido"));
@@ -392,9 +394,9 @@ public class main {
 
             int indice = Integer.parseInt(request.params("indice"));
             if (califico == false) {
-                lista.get(indice + ((pag - 1) * 5)).setLikes(lista.get(indice + ((pag - 1) * 5)).getLikes() + 1);
-                Articulo art = lista.get(indice + ((pag - 1) * 5));
-                art.setLikes(lista.get(indice + ((pag - 1) * 5)).getLikes());
+                lista.get(indice + ((pagenum - 1) * 5)).setLikes(lista.get(indice + ((pagenum - 1) * 5)).getLikes() + 1);
+                Articulo art = lista.get(indice + ((pagenum - 1) * 5));
+                art.setLikes(lista.get(indice + ((pagenum - 1) * 5)).getLikes());
                 ArticuloServices.getInstancia().editar(art);
                 califico = true;
                 //ACTUALIZAR LIKE EN BD
@@ -407,10 +409,10 @@ public class main {
 
             int indice = Integer.parseInt(request.params("indice"));
             if (califico == false) {
-                lista.get(indice + ((pag - 1) * 5)).setDislikes(lista.get(indice + ((pag - 1) * 5)).getDislikes() + 1);
+                lista.get(indice + ((pagenum - 1) * 5)).setDislikes(lista.get(indice + ((pagenum - 1) * 5)).getDislikes() + 1);
 
-                Articulo art = lista.get(indice + ((pag - 1) * 5));
-                art.setDislikes(lista.get(indice + ((pag - 1) * 5)).getDislikes());
+                Articulo art = lista.get(indice + ((pagenum - 1) * 5));
+                art.setDislikes(lista.get(indice + ((pagenum - 1) * 5)).getDislikes());
                 ArticuloServices.getInstancia().editar(art);
                 califico = true;
             }
@@ -423,9 +425,9 @@ public class main {
             int indice = Integer.parseInt(request.params("indiceComment"));
             int indiceArticulo = Integer.parseInt(request.params("indiceArt"));
             if (calificoComment == false) {
-                lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).setLikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getLikes() + 1);
-                Comentario com = lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice);
-                com.setLikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getLikes());
+                lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice).setLikes(lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice).getLikes() + 1);
+                Comentario com = lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice);
+                com.setLikes(lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice).getLikes());
                 ComentarioServices.getInstancia().editar(com);
                 calificoComment = true;
                 //ACTUALIZAR LIKE EN BD
@@ -440,9 +442,9 @@ public class main {
             int indice = Integer.parseInt(request.params("indiceComment"));
             int indiceArticulo = Integer.parseInt(request.params("indiceArt"));
             if (calificoComment == false) {
-                lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).setDislikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getDislikes() + 1);
-                Comentario com = lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice);
-                com.setDislikes(lista.get(indiceArticulo + ((pag - 1) * 5)).getComentarios().get(indice).getDislikes());
+                lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice).setDislikes(lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice).getDislikes() + 1);
+                Comentario com = lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice);
+                com.setDislikes(lista.get(indiceArticulo + ((pagenum - 1) * 5)).getComentarios().get(indice).getDislikes());
                 ComentarioServices.getInstancia().editar(com);
                 calificoComment = true;
                 //ACTUALIZAR LIKE EN BD
