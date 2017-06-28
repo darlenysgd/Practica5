@@ -74,10 +74,9 @@ public class ServidorMensajesWebSocketHandler {
                 case "iniciarSesion":
                     usuarios.put(usuario, mensaje[0].trim());
                     sesiones.put(mensaje[0].trim(), usuario);
+
                     break;
                 case "iniciarSesionAdmin":
-                    System.out.println("Se inicio la melma");
-
                     sesionAdmin = usuario;
                     break;
                 case "mensajeNuevo":

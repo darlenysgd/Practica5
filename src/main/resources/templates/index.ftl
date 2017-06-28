@@ -55,6 +55,9 @@
                     <li>
                         <a href="/cerrarSesion"><span class="dorado">Cerrar Sesion</span></a>
                     </li>
+                    <li>
+                        <a href="/charRoom"><span class="dorado">Sala de Chat</span></a>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -179,8 +182,9 @@
 
 
                 <div class="chatbox__body__message chatbox__body__message--left  hidden" id="area_chat"  >
-                    <p class="cuerpo"></p>
-
+                    <strong class="usuarioCaja"></strong>
+                    <p class="cuerpo hidden"></p>
+                    <p class="cuerpoAdmin hidden" style="color:red"></p>
 
                 </div>
             </div>
@@ -218,7 +222,9 @@
             var mensajeNuevo = $("#area_chat").clone();
 
             mensajeNuevo.removeClass("hidden");
+            mensajeNuevo.find(".cuerpo").removeClass("hidden");
             mensajeNuevo.find(".cuerpo").html(mensaje.val());
+            mensajeNuevo.find(".usuarioCaja").html("Tu:");
             $(".chatbox__body").append(mensajeNuevo);
             webSocket.send(mensaje.val()+"~mensajeNuevo");
             mensaje.val("");
@@ -244,7 +250,9 @@
 
             mensajeNuevo.removeClass("hidden");
             var mensajeRecibido = mensaje.data.split("~");
-            mensajeNuevo.find(".cuerpo").html(mensajeRecibido[0]);
+            mensajeNuevo.find(".cuerpoAdmin").removeClass("hidden");
+            mensajeNuevo.find(".usuarioCaja").html("Administrador:");
+            mensajeNuevo.find(".cuerpoAdmin").html(mensajeRecibido[0]);
             console.log(mensajeRecibido[0]);
             $(".chatbox__body").append(mensajeNuevo);
 

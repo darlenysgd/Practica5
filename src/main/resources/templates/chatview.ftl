@@ -19,7 +19,8 @@
                        <div class="chat-body clearfix aquiLaGente">
 
                                     <div class="header_sec hidden" id="userArea">
-                                        <strong class="primary-font userName"></strong>
+                                        <br>
+                                        <button class="userName btn btn-success" id="botonUsuario" ></button>
                                     </div>
                                     </div>
                             </div>
@@ -43,9 +44,12 @@
                     <div class="chat_area">
                         <div class="list-unstyled">
                             <br>
-                            <div class="left clearfix aquiAbajo">
-                                <div class="chat-body1 clearfix hidden " id="areaMensaje">
-                                    <p class="cajaMensaje"></p>
+                            <div class="left clearfix aquiAbajo ">
+                                <div class="chat-body1 clearfix hidden zonaMensaje" id="areaMensaje">
+                                    <strong class="cajaUsuario"></strong>
+                                    <strong class="cajaUsuarioAdmin"></strong>
+                                    <p class="cajaMensaje hidden"></p>
+                                    <p class="cuerpoUsuario hidden" style="color:red"></p>
                                 </div>
                             </div>
 
@@ -91,17 +95,22 @@
 <script type="text/javascript">
     var webSocket;
     var usuario;
+    var usuarioActual;
 
 
     $(document).ready(function() {
         conectar();
+
 
         $("#boton").click(function(){
             var mensaje = $("#mensajeAdmin");
             var mensajeNuevo = $("#areaMensaje").clone();
 
             mensajeNuevo.removeClass("hidden");
+            mensajeNuevo.find(".cajaMensaje").removeClass("hidden");
             mensajeNuevo.find(".cajaMensaje").html(mensaje.val());
+            mensajeNuevo.find(".cajaUsuario").html("Administrador");
+            mensajeNuevo.find(".cajaUsuarioAdmin").html(usuario);
             $(".aquiAbajo").append(mensajeNuevo);
             webSocket.send(mensaje.val()+"~mensajeNuevoAdmin"+"~"+usuario);
             mensaje.val("");
@@ -131,22 +140,50 @@
         function recibirInformacionServidor(mensaje) {
             var mensajeNuevo = $("#areaMensaje").clone();
             var usuarios = $("#userArea").clone();
-
-            mensajeNuevo.removeClass("hidden");
+            var esta = false;
             usuarios.removeClass("hidden");
+            mensajeNuevo.find(".cuerpoUsuario").removeClass("hidden");
             var mensajeRecibido = mensaje.data.split("~");
             usuario = mensajeRecibido[1];
-            mensajeNuevo.find(".cajaMensaje").html(mensajeRecibido[0]);
+            mensajeNuevo.find(".cuerpoUsuario").html(mensajeRecibido[0]);
             usuarios.find(".userName").html(mensajeRecibido[1]);
-
+            mensajeNuevo.find(".cajaUsuario").html(mensajeRecibido[1]);
             $(".aquiAbajo").append(mensajeNuevo);
-            $(".aquiLaGente").append(usuarios);
+            if (mensajeRecibido[1] === usuarioActual){
+                mensajeNuevo.removeClass("hidden");
+            }
+            $('.userName').each(function () {
+                   if($(this).html() === usuario){
+                    esta = true;
+                }
 
+            });
+
+
+            if (esta === false) {
+                $(".aquiLaGente").append(usuarios);
+            }
 
         }
 
+        $(document).on('click', '#botonUsuario', function(){
+            var name = $(this).html();
+            usuario = name;
+            usuarioActual = name;
+
+            $('.zonaMensaje').each(function () {
+                if($(this).find(".cajaUsuario").html() !== name || $(this).find(".cajaUsuarioAdmin").html() !== name ){
+                          $(this).addClass("hidden");
+                            }
+                if($(this).find(".cajaUsuario").html() === name || $(this).find(".cajaUsuarioAdmin").html() === name){
+                    $(this).removeClass("hidden");
+                }
 
 
+            });
+
+
+        });
     });
 
 

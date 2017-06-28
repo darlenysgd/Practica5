@@ -89,6 +89,14 @@ public class main {
         });
 
 
+        before("/chatRoom", (request, response) -> {
+
+            String str = request.session().attribute("usuario");
+            if (str == null || !usuario1.isAutor()){
+                response.redirect("/login");
+            }
+        });
+
         before("/comentar/:id", (request, response) -> {
 
             String str = request.session().attribute("usuario");

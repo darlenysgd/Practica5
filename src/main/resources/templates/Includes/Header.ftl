@@ -45,10 +45,16 @@
                         <a href="/Home"><span class="dorado">Inicio</span></a>
                     </li>
                     <li>
-                        <a href="#"><span class="dorado">Nueva entrada</span></a>
+                        <a href="/NuevoPost"><span class="dorado">Nueva entrada</span></a>
                     </li>
                     <li>
-                        <a href="#"><span class="dorado">Registro</span></a>
+                        <a href="/NuevoUsuario"><span class="dorado">Registro</span></a>
+                    </li>
+                    <li>
+                        <a href="/cerrarSesion"><span class="dorado">Cerrar Sesion</span></a>
+                    </li>
+                    <li>
+                        <a href="/charRoom"><span class="dorado">Sala de Chat</span></a>
                     </li>
                 </ul>
             </div>
