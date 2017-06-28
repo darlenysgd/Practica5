@@ -47,6 +47,7 @@
                             <div class="left clearfix aquiAbajo ">
                                 <div class="chat-body1 clearfix hidden zonaMensaje" id="areaMensaje">
                                     <strong class="cajaUsuario"></strong>
+                                    <strong class="cajaUsuarioAdmin"></strong>
                                     <p class="cajaMensaje hidden"></p>
                                     <p class="cuerpoUsuario hidden" style="color:red"></p>
                                 </div>
@@ -94,6 +95,7 @@
 <script type="text/javascript">
     var webSocket;
     var usuario;
+    var usuarioActual;
 
 
     $(document).ready(function() {
@@ -108,6 +110,7 @@
             mensajeNuevo.find(".cajaMensaje").removeClass("hidden");
             mensajeNuevo.find(".cajaMensaje").html(mensaje.val());
             mensajeNuevo.find(".cajaUsuario").html("Administrador");
+            mensajeNuevo.find(".cajaUsuarioAdmin").html(usuario);
             $(".aquiAbajo").append(mensajeNuevo);
             webSocket.send(mensaje.val()+"~mensajeNuevoAdmin"+"~"+usuario);
             mensaje.val("");
@@ -138,17 +141,17 @@
             var mensajeNuevo = $("#areaMensaje").clone();
             var usuarios = $("#userArea").clone();
             var esta = false;
-            mensajeNuevo.removeClass("hidden");
             usuarios.removeClass("hidden");
             mensajeNuevo.find(".cuerpoUsuario").removeClass("hidden");
             var mensajeRecibido = mensaje.data.split("~");
             usuario = mensajeRecibido[1];
-
-
             mensajeNuevo.find(".cuerpoUsuario").html(mensajeRecibido[0]);
             usuarios.find(".userName").html(mensajeRecibido[1]);
             mensajeNuevo.find(".cajaUsuario").html(mensajeRecibido[1]);
             $(".aquiAbajo").append(mensajeNuevo);
+            if (mensajeRecibido[1] === usuarioActual){
+                mensajeNuevo.removeClass("hidden");
+            }
             $('.userName').each(function () {
                    if($(this).html() === usuario){
                     esta = true;
@@ -166,11 +169,15 @@
         $(document).on('click', '#botonUsuario', function(){
             var name = $(this).html();
             usuario = name;
+            usuarioActual = name;
 
             $('.zonaMensaje').each(function () {
-                if($(this).find(".cajaUsuario").html() === name ){
+                if($(this).find(".cajaUsuario").html() !== name ){
                           $(this).addClass("hidden");
                             }
+                if($(this).find(".cajaUsuario").html() === name ){
+                    $(this).removeClass("hidden");
+                }
 
             });
 
