@@ -44,8 +44,8 @@
                     <div class="chat_area">
                         <div class="list-unstyled">
                             <br>
-                            <div class="left clearfix aquiAbajo">
-                                <div class="chat-body1 clearfix hidden " id="areaMensaje">
+                            <div class="left clearfix aquiAbajo ">
+                                <div class="chat-body1 clearfix hidden zonaMensaje" id="areaMensaje">
                                     <strong class="cajaUsuario"></strong>
                                     <p class="cajaMensaje hidden"></p>
                                     <p class="cuerpoUsuario hidden" style="color:red"></p>
@@ -166,18 +166,22 @@
         $(document).on('click', '#botonUsuario', function(){
             var name = $(this).html();
             usuario = name;
-            $('#areaMensaje').each(function () {
-                var usuarioMensaje = $(this).find(".cajaUsuario").html();
-                console.log(usuarioMensaje);
+
+            $('.zonaMensaje').each(function () {
+                if($(this).find(".cajaUsuario").html() === name ){
+                          $(this).addClass("hidden");
+                            }
+
+            });
+
+           // $('#areaMensaje').each(function () {
+              //  var usuarioMensaje = $(this).find(".cajaUsuario").innerHTML;
+              //  console.log(usuarioMensaje);
                 //  if($(this).find(".cajaUsuario").html() !== name ){
                 //      $(this).addClass("hidden");
                 //   }
-            });
+            //});
         });
-
-
-
-
     });
 
 
