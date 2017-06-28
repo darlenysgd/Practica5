@@ -20,7 +20,7 @@
 
                                     <div class="header_sec hidden" id="userArea">
                                         <br>
-                                        <a href="#" class="userName" id="botonUsuario" ></a>
+                                        <button class="userName btn btn-success" id="botonUsuario" ></button>
                                     </div>
                                     </div>
                             </div>
@@ -172,22 +172,17 @@
             usuarioActual = name;
 
             $('.zonaMensaje').each(function () {
-                if($(this).find(".cajaUsuario").html() !== name ){
+                if($(this).find(".cajaUsuario").html() !== name || $(this).find(".cajaUsuarioAdmin").html() !== name ){
                           $(this).addClass("hidden");
                             }
-                if($(this).find(".cajaUsuario").html() === name ){
+                if($(this).find(".cajaUsuario").html() === name || $(this).find(".cajaUsuarioAdmin").html() === name){
                     $(this).removeClass("hidden");
                 }
 
+
             });
 
-           // $('#areaMensaje').each(function () {
-              //  var usuarioMensaje = $(this).find(".cajaUsuario").innerHTML;
-              //  console.log(usuarioMensaje);
-                //  if($(this).find(".cajaUsuario").html() !== name ){
-                //      $(this).addClass("hidden");
-                //   }
-            //});
+
         });
     });
 
