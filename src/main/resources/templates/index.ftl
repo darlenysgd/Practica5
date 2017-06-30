@@ -75,57 +75,57 @@
 
                 <h1 class="page-header">
                     Programación Web
-                    <small>Práctica #3</small>
+                    <small>Práctica #5</small>
                 </h1>
 
                 <div id="VerArticulos">
 
-                <#if vacio>
-                    <#list articulos as art>
+                    <#if first>
+                        <#list articulos as art>
 
-                        <h2>
-                            <a href="/Entrada/${art_index}">${art.getTitulo()}</a>
-                        </h2>
-                        <p>
-                            Autor: <a href="">${art.getAutor().getNombre()}</a>
-                        </p>
-                        <p><span class="glyphicon glyphicon-time"></span>${art.getFecha()}</p>
-                        <hr>
+                            <h2>
+                                <a href="/Entrada/${art_index}">${art.getTitulo()}</a>
+                            </h2>
+                            <p>
+                                Autor: <a href="">${art.getAutor().getNombre()}</a>
+                            </p>
+                            <p><span class="glyphicon glyphicon-time"></span>${art.getFecha()}</p>
+                            <hr>
 
-                        <#assign cuerpo=art.getCuerpo()>
-                        <#if cuerpo?length &lt; 70>
-                        ${cuerpo}
-                        <#else>
-                        ${cuerpo?substring(0,70) + "..."}
-                        </#if>
+                            <#assign cuerpo=art.getCuerpo()>
+                            <#if cuerpo?length &lt; 70>
+                            ${cuerpo}
+                            <#else>
+                            ${cuerpo?substring(0,70) + "..."}
+                            </#if>
 
-                        <br><br>
-                        <a class="btn btn-primary" href="/Entrada/${art_index}">Leer Más<span class="glyphicon glyphicon-chevron-right"></span></a>
+                            <br><br>
+                            <a class="btn btn-primary" href="/Entrada/${art_index}">Leer Más<span class="glyphicon glyphicon-chevron-right"></span></a>
 
-                        <hr>
+                            <hr>
 
-                    </#list>
-                </#if>
+                        </#list>
+
+
+                    </#if>
 
                 </div>
 
                 <div id="pagg"></div>
-                <#if numPag gt 1 >
-                    <form>
-                        <button class="btn btn-icon" onclick="paginar2()">Anterior</button>
-                    </form>
 
-
-                </#if>
                 <#if mas>
-                    <form>
-                        <button class="btn btn-icon" onclick="paginar()">Siguiente</button>
-                    </form>
+                    <button onclick="paginar1()" type="submit" class="btn btn-primary">Siguiente</button>
                 </#if>
+
+                <button onclick="paginar2()" class="btn btn-primary" type="submit" >Anterior</button>
                 <nav style="float:right;">
 
             </div>
 
+            <div id="VerArticulos">
+
+
+            </div>
             <!-- Blog Sidebar Widgets Column -->
             <div class="col-md-4">
 
@@ -296,5 +296,22 @@
 
 
 </script>
+<script>
+    function paginar1(){
 
+        $.get("/HomeNext", function (data) {
+            $("#VerArticulos").html(data)
+
+        })
+    }
+
+    function paginar2() {
+
+        $.get("/HomeBack", function (data) {
+            $("#VerArticulos").html(data)
+
+        })
+
+    }
+    </script>
 </html>

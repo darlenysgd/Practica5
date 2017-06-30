@@ -39,6 +39,7 @@ public class main {
     static int pag = 0;
     static boolean next = true;
 
+    static boolean firstTime = false;
    static int pagenum = 1;
 
     public static void main(String[] args) {
@@ -155,9 +156,7 @@ public class main {
 
         get("/Home", (request, response) -> {
 
-            if (pagenum < 1){
-                pagenum = 1;
-            }
+
             List<Articulo> artspage = ArticuloServices.getInstancia().pagination(pagenum);
 
 
@@ -178,6 +177,8 @@ public class main {
 
             }
 
+            firstTime = true;
+            attributes.put("first",firstTime);
             attributes.put("vacio", vacio);
             attributes.put("mas", mas);
             attributes.put("etiquetas", listaEtiquetas);
@@ -191,34 +192,33 @@ public class main {
 
         get("/HomeNext", (request, response) -> {
 
-            if (next) {
                 pagenum++;
-            }
+
 
             next = true;
 
-            response.redirect("/Home");
-            return null;
+            List<Articulo> artspage = ArticuloServices.getInstancia().pagination(pagenum);
+            Map<String, Object> attributes = new HashMap<>();
 
+            attributes.put("numPag", pagenum);
+            attributes.put("articulos",artspage);
+            return new ModelAndView(attributes, "CargaArticulos.ftl");
 
-
-        });
+        }, freeMarkerEngine);
 
         get("/HomeBack", (request, response) -> {
 
-            if (pagenum>1){
-                pagenum--;
-
-            }
+            pagenum--;
 
            next = false;
 
-            response.redirect("/Home");
+            List<Articulo> artspage = ArticuloServices.getInstancia().pagination(pagenum);
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("articulos",artspage);
+            attributes.put("numPag", pagenum);
+            return new ModelAndView(attributes, "CargaArticulos.ftl");
 
-            return null;
-
-
-        });
+        },freeMarkerEngine);
 
         get("/HomePage/:numPag", (request, response) -> {
 

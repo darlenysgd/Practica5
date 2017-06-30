@@ -12,12 +12,11 @@ function paginar(){
 }
 
 
-function paginar2(){
+function paginar3() {
 
     $.get("/HomeBack", function (data) {
         $("#VerArticulos").html(data)
 
     })
-
 
 }

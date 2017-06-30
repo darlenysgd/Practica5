@@ -1,5 +1,4 @@
 
-<#if vacio>
     <#list articulos as art>
 
         <h2>
@@ -24,5 +23,4 @@
         <hr>
 
     </#list>
-</#if>
 

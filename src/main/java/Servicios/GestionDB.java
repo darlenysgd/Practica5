@@ -47,11 +47,11 @@ public class GestionDB<T> {
                 try {
                     f.setAccessible(true);
                     Object valorCampo = f.get(entidad);
-
+/*
                     System.out.println("nombre del campo: "+f.getName());
                     System.out.println("Tipo del campo: "+f.getType().getName());
                     System.out.println("Valor del campo: "+valorCampo );
-
+*/
                     return valorCampo;
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
